@@ -1,0 +1,344 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>Official_MineSweeper</title>
+<meta name="generator" content="MATLAB 23.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2023-11-29">
+<meta name="DC.source" content="Official_MineSweeper.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">Game_Scene = simpleGameEngine(<span class="string">'MineSweeper.png'</span>, 84, 84, 1, [245,245,245]);
+
+transparent = 1;
+tCovered = 2;
+tFlag = 3;
+t0 = 4;
+t1 = 5;
+t2 = 6;
+t3 = 7;
+t4 = 8;
+t5 = 9;
+t6 = 10;
+t7 = 11;
+t8 = 12;
+tRedX = 13;
+tBomb = 14;
+playAgainTile = 15;
+quitTile = 17;
+bombTransparent = 18:19;
+flagTransparent = 20;
+
+
+
+
+userWantPlay = true;
+<span class="keyword">while</span> userWantPlay
+
+    winCheck = false;
+    loseCheck = false;
+
+    [difficulty, numberOfBombs] = getDifficultyLevel();
+    flagCounter = numberOfBombs;
+
+    <span class="comment">%this is the start of the game</span>
+    [boardBackground, boardForeground, numRows, numCol] = newGame(difficulty);
+    close <span class="string">all</span> <span class="string">hidden</span>
+    drawScene(Game_Scene, boardBackground, boardForeground);
+    flagCounterText = text(1,1,int2str(flagCounter),<span class="string">"FontSize"</span>, 20, <span class="string">"FontWeight"</span>,<span class="string">"bold"</span>,<span class="string">"HorizontalAlignment"</span>,<span class="string">"center"</span>, <span class="string">"VerticalAlignment"</span>,<span class="string">"middle"</span>, <span class="string">"Color"</span>, <span class="string">'r'</span>);
+
+
+    <span class="comment">%until they have left clicked to reveal the tiles</span>
+    firstClick = false;
+    <span class="keyword">while</span> ~firstClick
+        [rowClicked, colClicked, buttonClicked] = getMouseInput(Game_Scene);
+
+
+        <span class="comment">%if they left click to reveal tiles</span>
+        <span class="keyword">if</span> (boardForeground(rowClicked,colClicked) == tCovered &amp;&amp; buttonClicked == 1)
+            firstClick = true;
+
+            <span class="comment">%place all the bombs</span>
+            boardBackground = placeBombs(boardBackground, difficulty, rowClicked, colClicked, numberOfBombs);
+
+            <span class="comment">%place all the tile numbers based on where the bombs are</span>
+            boardBackground = placeNumbers(boardBackground);
+
+            <span class="comment">%reveal tiles</span>
+            boardForeground = revealTiles(boardBackground, boardForeground, rowClicked, colClicked);
+
+        <span class="comment">%if they right click to place a flag</span>
+        <span class="keyword">elseif</span> (boardForeground(rowClicked,colClicked) == tCovered &amp;&amp; buttonClicked == 3)
+            [boardForeground,flagCounter] = flagToggle(boardForeground, rowClicked, colClicked,flagCounter);
+        <span class="keyword">end</span>
+        drawScene(Game_Scene, boardBackground, boardForeground);
+        delete(flagCounterText);
+        flagCounterText = text(-100,-100,int2str(flagCounter),<span class="string">"FontSize"</span>, 20, <span class="string">"FontWeight"</span>,<span class="string">"bold"</span>,<span class="string">"HorizontalAlignment"</span>,<span class="string">"center"</span>, <span class="string">"VerticalAlignment"</span>,<span class="string">"middle"</span>, <span class="string">"Color"</span>, <span class="string">'r'</span>);
+
+    <span class="keyword">end</span>
+
+    <span class="comment">%this part is run continously until they win or lose</span>
+    <span class="keyword">while</span> ~loseCheck &amp;&amp; ~winCheck
+
+        validClick =false;
+        <span class="keyword">while</span> ~validClick
+            [rowClicked, colClicked, buttonClicked] = getMouseInput(Game_Scene);
+
+            <span class="comment">%if they left click to reveal a covered tile</span>
+            <span class="keyword">if</span> (boardForeground(rowClicked,colClicked) == tCovered &amp;&amp; buttonClicked == 1)
+                validClick = true;
+
+                boardForeground = revealTiles(boardBackground, boardForeground, rowClicked, colClicked);
+
+                <span class="comment">%if the user clicks on a bomb</span>
+                <span class="keyword">if</span> boardBackground(rowClicked,colClicked) == tBomb
+                    loseCheck = true;
+
+
+
+                <span class="comment">%else right now as long as we have no other buttons on the</span>
+                <span class="comment">%screen, but basically if they press a number tile</span>
+                <span class="keyword">else</span>
+                    boardForeground(rowClicked,colClicked) = transparent;
+
+                    winCheck = winnerCheck(boardBackground, boardForeground);
+                    <span class="comment">%reveal win screen with options</span>
+
+                 <span class="keyword">end</span>
+
+            <span class="comment">%if they right click on a tile</span>
+            <span class="keyword">elseif</span> ((boardForeground(rowClicked,colClicked) == tFlag || boardForeground(rowClicked,colClicked) == tCovered) &amp;&amp; buttonClicked == 3)
+                validClick = true;
+                [boardForeground,flagCounter] = flagToggle(boardForeground, rowClicked,colClicked, flagCounter);
+            <span class="keyword">end</span>
+        drawScene(Game_Scene, boardBackground, boardForeground);
+        delete(flagCounterText);
+        flagCounterText = text(1,1,int2str(flagCounter),<span class="string">"FontSize"</span>, 20, <span class="string">"FontWeight"</span>,<span class="string">"bold"</span>,<span class="string">"HorizontalAlignment"</span>,<span class="string">"center"</span>, <span class="string">"VerticalAlignment"</span>,<span class="string">"middle"</span>, <span class="string">"Color"</span>, <span class="string">'r'</span>);
+        <span class="keyword">end</span>
+
+    <span class="keyword">end</span>
+
+    <span class="keyword">if</span> winCheck
+        userWantPlay = winnerScreen(boardBackground, boardForeground, difficulty);
+    <span class="keyword">else</span>
+        <span class="comment">%ask user to play again screen</span>
+        userWantPlay = gameOverScreen(boardBackground, boardForeground, difficulty);
+    <span class="keyword">end</span>
+
+
+
+
+
+<span class="keyword">end</span>
+
+close <span class="string">all</span> <span class="string">hidden</span>
+clear
+clc
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+Game_Scene = simpleGameEngine('MineSweeper.png', 84, 84, 1, [245,245,245]);
+
+transparent = 1;
+tCovered = 2;
+tFlag = 3;
+t0 = 4;
+t1 = 5;
+t2 = 6;
+t3 = 7;
+t4 = 8;
+t5 = 9;
+t6 = 10;
+t7 = 11;
+t8 = 12;
+tRedX = 13;
+tBomb = 14;
+playAgainTile = 15;
+quitTile = 17;
+bombTransparent = 18:19;
+flagTransparent = 20;
+
+
+
+
+userWantPlay = true;
+while userWantPlay
+    
+    winCheck = false;
+    loseCheck = false;
+
+    [difficulty, numberOfBombs] = getDifficultyLevel();
+    flagCounter = numberOfBombs;
+
+    %this is the start of the game
+    [boardBackground, boardForeground, numRows, numCol] = newGame(difficulty);
+    close all hidden
+    drawScene(Game_Scene, boardBackground, boardForeground);
+    flagCounterText = text(1,1,int2str(flagCounter),"FontSize", 20, "FontWeight","bold","HorizontalAlignment","center", "VerticalAlignment","middle", "Color", 'r');
+
+        
+    %until they have left clicked to reveal the tiles
+    firstClick = false;
+    while ~firstClick
+        [rowClicked, colClicked, buttonClicked] = getMouseInput(Game_Scene);
+        
+        
+        %if they left click to reveal tiles
+        if (boardForeground(rowClicked,colClicked) == tCovered && buttonClicked == 1)
+            firstClick = true;
+            
+            %place all the bombs
+            boardBackground = placeBombs(boardBackground, difficulty, rowClicked, colClicked, numberOfBombs);
+            
+            %place all the tile numbers based on where the bombs are
+            boardBackground = placeNumbers(boardBackground);
+            
+            %reveal tiles
+            boardForeground = revealTiles(boardBackground, boardForeground, rowClicked, colClicked);
+        
+        %if they right click to place a flag
+        elseif (boardForeground(rowClicked,colClicked) == tCovered && buttonClicked == 3)
+            [boardForeground,flagCounter] = flagToggle(boardForeground, rowClicked, colClicked,flagCounter);
+        end
+        drawScene(Game_Scene, boardBackground, boardForeground);
+        delete(flagCounterText);
+        flagCounterText = text(-100,-100,int2str(flagCounter),"FontSize", 20, "FontWeight","bold","HorizontalAlignment","center", "VerticalAlignment","middle", "Color", 'r');
+
+    end
+
+    %this part is run continously until they win or lose
+    while ~loseCheck && ~winCheck
+        
+        validClick =false;
+        while ~validClick
+            [rowClicked, colClicked, buttonClicked] = getMouseInput(Game_Scene);
+        
+            %if they left click to reveal a covered tile
+            if (boardForeground(rowClicked,colClicked) == tCovered && buttonClicked == 1)
+                validClick = true;
+
+                boardForeground = revealTiles(boardBackground, boardForeground, rowClicked, colClicked);
+                
+                %if the user clicks on a bomb
+                if boardBackground(rowClicked,colClicked) == tBomb
+                    loseCheck = true;
+                    
+                
+                
+                %else right now as long as we have no other buttons on the
+                %screen, but basically if they press a number tile
+                else
+                    boardForeground(rowClicked,colClicked) = transparent;
+
+                    winCheck = winnerCheck(boardBackground, boardForeground);
+                    %reveal win screen with options
+                
+                 end
+
+            %if they right click on a tile
+            elseif ((boardForeground(rowClicked,colClicked) == tFlag || boardForeground(rowClicked,colClicked) == tCovered) && buttonClicked == 3)
+                validClick = true;
+                [boardForeground,flagCounter] = flagToggle(boardForeground, rowClicked,colClicked, flagCounter);
+            end
+        drawScene(Game_Scene, boardBackground, boardForeground);
+        delete(flagCounterText);
+        flagCounterText = text(1,1,int2str(flagCounter),"FontSize", 20, "FontWeight","bold","HorizontalAlignment","center", "VerticalAlignment","middle", "Color", 'r');
+        end
+
+    end
+    
+    if winCheck
+        userWantPlay = winnerScreen(boardBackground, boardForeground, difficulty);
+    else
+        %ask user to play again screen
+        userWantPlay = gameOverScreen(boardBackground, boardForeground, difficulty);
+    end
+    
+
+
+            
+
+end
+
+close all hidden
+clear
+clc
+
+##### SOURCE END #####
+-->
+</body>
+</html>
